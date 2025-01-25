@@ -1,0 +1,8 @@
+.git
+node_modules
+.angular
+.vscode
+README.md
+*.spec.ts
+e2e
+coverage 

@@ -4,8 +4,8 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build --configuration production",
-    "vercel-build": "ng build --configuration production",
+    "build": "ng build",
+    "vercel-build": "npm run build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "serve:ssr:note-app": "node dist/note-app/server/server.mjs"
