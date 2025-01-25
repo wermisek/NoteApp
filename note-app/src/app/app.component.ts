@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, Renderer2, PLATFORM_ID, Inject } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { NoteService, Note, Category } from './services/note.service';
@@ -25,9 +25,23 @@ export class AppComponent implements OnInit {
   showTagSuggestions: boolean = false;
   currentLanguage: string = 'en';
   translations: any;
+  isDarkTheme = false;
+  private isBrowser: boolean;
 
-  constructor(private noteService: NoteService) {
+  constructor(
+    private noteService: NoteService,
+    private renderer: Renderer2,
+    @Inject(PLATFORM_ID) platformId: Object
+  ) {
     this.categories = this.noteService.categories;
+    this.isBrowser = isPlatformBrowser(platformId);
+    
+    // Load saved theme preference only in browser environment
+    if (this.isBrowser) {
+      const savedTheme = localStorage.getItem('theme');
+      this.isDarkTheme = savedTheme === 'light' ? false : true; // Default to dark if not set
+      this.applyTheme(this.isDarkTheme);
+    }
   }
 
   ngOnInit() {
@@ -363,5 +377,47 @@ export class AppComponent implements OnInit {
 
   getTranslatedCategory(categoryName: string): string {
     return this.translations.categoryNames[categoryName] || categoryName;
+  }
+
+  toggleTheme(event: MouseEvent) {
+    this.isDarkTheme = !this.isDarkTheme;
+    
+    if (this.isBrowser) {
+      // Store theme preference
+      localStorage.setItem('theme', this.isDarkTheme ? 'dark' : 'light');
+      
+      // Get click coordinates for the animation
+      const x = event.clientX;
+      const y = event.clientY;
+      document.documentElement.style.setProperty('--theme-transition-top', `${y}px`);
+      document.documentElement.style.setProperty('--theme-transition-left', `${x}px`);
+      
+      // Add animation class to body
+      this.renderer.addClass(document.body, 'theme-transition');
+      
+      // Apply theme after a small delay to ensure animation starts
+      setTimeout(() => {
+        if (!this.isDarkTheme) {
+          this.renderer.addClass(document.body, 'light-theme');
+        } else {
+          this.renderer.removeClass(document.body, 'light-theme');
+        }
+      }, 50);
+      
+      // Remove transition class after animation
+      setTimeout(() => {
+        this.renderer.removeClass(document.body, 'theme-transition');
+      }, 1000);
+    }
+  }
+
+  private applyTheme(isDark: boolean) {
+    if (this.isBrowser) {
+      if (!isDark) {
+        this.renderer.addClass(document.body, 'light-theme');
+      } else {
+        this.renderer.removeClass(document.body, 'light-theme');
+      }
+    }
   }
 }

@@ -1,64 +1,141 @@
 /* You can add global styles to this file, and also import other style files */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
-/* Modern CSS Reset and Global Styles */
+/* Theme Variables */
 :root {
-  /* Dark Theme */
-  --primary: #3B82F6;
-  --primary-dark: #2563EB;
-  --primary-light: rgba(59, 130, 246, 0.1);
-  --secondary: #1E293B;
-  --accent: #38BDF8;
-  --background: #0B1121;
-  --surface: #111827;
-  --surface-light: #1F2937;
-  --text: #F9FAFB;
-  --text-light: #9CA3AF;
-  --border: #374151;
-  --danger: #EF4444;
-  --success: #10B981;
-  --warning: #F59E0B;
-  --info: #0EA5E9;
-
-  /* Shadows */
-  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.5);
+  /* Dark Theme (default) */
+  --background: #0f172a;  /* Darker blue-black */
+  --surface: #1e293b;    /* Darker surface */
+  --surface-light: #334155;  /* Adjusted for better contrast */
+  --text: #ffffff;       /* Pure white for maximum contrast */
+  --text-light: #cbd5e0; /* Lighter gray for better visibility */
+  --primary: #38bdf8;    /* Brighter blue */
+  --primary-dark: #0284c7;
+  --primary-light: rgba(56, 189, 248, 0.2); /* Increased opacity */
+  --border: #475569;     /* Lighter border for better visibility */
+  --danger: #f87171;     /* Lighter red for better visibility */
+  --success: #34d399;    /* Lighter green for better visibility */
+  --warning: #fbbf24;    /* Lighter yellow for better visibility */
+  --info: #93c5fd;       /* Lighter blue for better visibility */
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.4);
   --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.5);
-  --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.6);
 }
 
+/* Light Theme */
+body.light-theme {
+  --background: #f1f5f9;  /* Slightly off-white for better contrast */
+  --surface: #ffffff;
+  --surface-light: #f8fafc;
+  --text: #0f172a;       /* Darker text for better readability */
+  --text-light: #475569;
+  --primary: #0284c7;    /* More vibrant primary color */
+  --primary-dark: #0369a1;
+  --primary-light: rgba(2, 132, 199, 0.15);
+  --border: #e2e8f0;
+  --danger: #dc2626;
+  --success: #059669;
+  --warning: #d97706;
+  --info: #2563eb;
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07);
+  --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+/* Base Styles */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
 }
 
-html, body {
-  height: 100%;
-  width: 100%;
-  overflow-x: hidden;
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
   background-color: var(--background);
   color: var(--text);
+  min-height: 100vh;
+  line-height: 1.5;
 }
 
-/* Modern Scrollbar */
+/* Theme Transition */
+body, body * {
+  transition: background-color 0.3s ease,
+              color 0.3s ease,
+              border-color 0.3s ease,
+              box-shadow 0.3s ease;
+}
+
+/* Theme Transition Animation */
+body.theme-transition {
+  &::before {
+    content: '';
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: var(--background);
+    border-radius: 50%;
+    z-index: 9999;
+    pointer-events: none;
+    transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    transform: translate(-50%, -50%);
+  }
+
+  &.dark-theme::before {
+    width: 300vmax;
+    height: 300vmax;
+  }
+}
+
+/* Scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--surface);
+  background: var(--surface-light);
+  border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--surface-light);
+  background: var(--text-light);
   border-radius: 4px;
-
+  
   &:hover {
-    background: var(--border);
+    background: var(--primary);
   }
+}
+
+/* Selection */
+::selection {
+  background: var(--primary-light);
+  color: var(--primary);
+}
+
+/* Input Autofill Fix */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  transition: background-color 5000s ease-in-out 0s;
+  -webkit-text-fill-color: var(--text) !important;
+}
+
+body.dark-theme {
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 30px var(--surface) inset !important;
+  }
+}
+
+/* Focus */
+:focus {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
 }
 
 /* Smooth Scrolling */
@@ -66,14 +143,30 @@ html {
   scroll-behavior: smooth;
 }
 
-/* Focus Styles */
-:focus {
-  outline: 2px solid var(--primary);
-  outline-offset: 2px;
+/* Ensure text is always visible in inputs and textareas */
+input, textarea {
+  &::placeholder {
+    opacity: 0.7;
+  }
 }
 
-/* Selection Color */
-::selection {
-  background: var(--primary);
-  color: var(--text);
+/* Improve contrast for disabled elements */
+button:disabled, 
+input:disabled, 
+textarea:disabled {
+  opacity: 0.6;
+}
+
+/* Improve visibility of focused elements in dark theme */
+body:not(.light-theme) {
+  :focus {
+    outline-color: var(--primary);
+    outline-width: 3px;
+  }
+
+  input, textarea {
+    &:focus {
+      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.3);
+    }
+  }
 }

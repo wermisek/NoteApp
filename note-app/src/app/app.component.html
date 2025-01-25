@@ -197,6 +197,9 @@
           <i class="fas fa-language"></i>
           <span class="language-code">{{ currentLanguage | uppercase }}</span>
         </button>
+        <button class="btn-icon theme-btn" (click)="toggleTheme($event)" [title]="isDarkTheme ? 'Switch to Light Theme' : 'Switch to Dark Theme'">
+          <i class="fas" [class.fa-moon]="!isDarkTheme" [class.fa-sun]="isDarkTheme"></i>
+        </button>
       </div>
     </div>
   </header>
