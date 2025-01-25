@@ -1,6 +1,8 @@
 {
   "version": 2,
   "framework": "angular",
+  "buildCommand": "cd note-app && npm install && npm run build",
+  "outputDirectory": "note-app/dist/note-app",
   "routes": [
     {
       "handle": "filesystem"
