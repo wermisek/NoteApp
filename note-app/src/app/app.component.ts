@@ -28,6 +28,14 @@ export class AppComponent implements OnInit {
   isDarkTheme = false;
   private isBrowser: boolean;
 
+  // New properties for header features
+  sortMenuOpen: boolean = false;
+  sortBy: 'date' | 'title' | 'category' = 'date';
+  sortDirection: 'asc' | 'desc' = 'desc';
+  showStats: boolean = false;
+  isSyncing: boolean = false;
+  showFeaturesMenu: boolean = false;
+
   constructor(
     private noteService: NoteService,
     private renderer: Renderer2,
@@ -419,5 +427,91 @@ export class AppComponent implements OnInit {
         this.renderer.removeClass(document.body, 'light-theme');
       }
     }
+  }
+
+  // Header feature functions
+  toggleFeaturesMenu() {
+    this.showFeaturesMenu = !this.showFeaturesMenu;
+    if (!this.showFeaturesMenu) {
+      this.sortMenuOpen = false;
+      this.showStats = false;
+    }
+  }
+
+  toggleSortMenu(event?: MouseEvent) {
+    if (event) {
+      event.stopPropagation();
+    }
+    this.sortMenuOpen = !this.sortMenuOpen;
+    this.showStats = false;
+  }
+
+  toggleStats(event?: MouseEvent) {
+    if (event) {
+      event.stopPropagation();
+    }
+    this.showStats = !this.showStats;
+    this.sortMenuOpen = false;
+  }
+
+  syncNotes() {
+    if (this.isSyncing) return;
+    
+    this.isSyncing = true;
+    const syncBtn = document.querySelector('.sync-btn i');
+    if (syncBtn) {
+      syncBtn.classList.add('syncing');
+    }
+
+    // Simulate sync process
+    setTimeout(() => {
+      this.isSyncing = false;
+      if (syncBtn) {
+        syncBtn.classList.remove('syncing');
+      }
+      // Here you would typically handle the actual sync logic
+      console.log('Notes synced successfully');
+    }, 2000);
+  }
+
+  // Sort functionality
+  sortNotes(by: 'date' | 'title' | 'category') {
+    this.sortBy = by;
+    this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+    
+    this.filteredNotes.sort((a, b) => {
+      let comparison = 0;
+      switch (by) {
+        case 'date':
+          comparison = new Date(b.lastModified).getTime() - new Date(a.lastModified).getTime();
+          break;
+        case 'title':
+          comparison = (a.title || '').localeCompare(b.title || '');
+          break;
+        case 'category':
+          comparison = a.category.localeCompare(b.category);
+          break;
+      }
+      return this.sortDirection === 'asc' ? comparison : -comparison;
+    });
+  }
+
+  // Stats calculations
+  getNoteStats() {
+    const totalNotes = this.notes.length;
+    const totalWords = this.notes.reduce((sum, note) => 
+      sum + (note.content.trim().split(/\s+/).length || 0), 0);
+    const categoryCounts = this.notes.reduce((acc, note) => {
+      acc[note.category] = (acc[note.category] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+    const favoritesCount = this.notes.filter(note => note.isFavorite).length;
+
+    return {
+      totalNotes,
+      totalWords,
+      categoryCounts,
+      favoritesCount
+    };
   }
 }
