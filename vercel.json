@@ -1,12 +1,19 @@
 {
   "version": 2,
-  "outputDirectory": "note-app/dist/note-app",
-  "buildCommand": "cd note-app && npm install && npm run build",
-  "installCommand": "cd note-app && npm install",
-  "rewrites": [
+  "builds": [
     {
-      "source": "/(.*)",
-      "destination": "/index.html"
+      "src": "note-app/package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "dist/note-app",
+        "buildCommand": "npm run build"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "note-app/dist/note-app/index.html"
     }
   ]
 } 
